@@ -149,15 +149,34 @@ add_custom_command(
     COMMAND_EXPAND_LISTS
 )
 
-add_custom_command(
-    OUTPUT ${MICROPY_QSTRDEFS_PREPROCESSED}
-    COMMAND cat ${MICROPY_QSTRDEFS_PY} ${MICROPY_QSTRDEFS_PORT} ${MICROPY_QSTRDEFS_COLLECTED} | sed "s/^Q(.*)/\"&\"/" | ${CMAKE_C_COMPILER} -E ${MICROPY_CPP_FLAGS} - | sed "s/^\\\"\\(Q(.*)\\)\\\"/\\1/" > ${MICROPY_QSTRDEFS_PREPROCESSED}
-    DEPENDS ${MICROPY_QSTRDEFS_PY}
-        ${MICROPY_QSTRDEFS_PORT}
-        ${MICROPY_QSTRDEFS_COLLECTED}
-    VERBATIM
-    COMMAND_EXPAND_LISTS
-)
+if(CMAKE_HOST_WIN32)
+    add_custom_command(
+        OUTPUT ${MICROPY_QSTRDEFS_PREPROCESSED}
+        COMMAND ${Python3_EXECUTABLE} ${MICROPY_PORT_DIR}/../../../tools-win/preprocess_qstrdefs.py
+            --compiler ${CMAKE_C_COMPILER}
+            --output ${MICROPY_QSTRDEFS_PREPROCESSED}
+            --qstrdefs-py ${MICROPY_QSTRDEFS_PY}
+            --qstrdefs-port ${MICROPY_QSTRDEFS_PORT}
+            --qstrdefs-collected ${MICROPY_QSTRDEFS_COLLECTED}
+            ${MICROPY_CPP_FLAGS}
+        DEPENDS ${MICROPY_QSTRDEFS_PY}
+            ${MICROPY_QSTRDEFS_PORT}
+            ${MICROPY_QSTRDEFS_COLLECTED}
+            ${MICROPY_PORT_DIR}/../../../tools-win/preprocess_qstrdefs.py
+        VERBATIM
+        COMMAND_EXPAND_LISTS
+    )
+else()
+    add_custom_command(
+        OUTPUT ${MICROPY_QSTRDEFS_PREPROCESSED}
+        COMMAND cat ${MICROPY_QSTRDEFS_PY} ${MICROPY_QSTRDEFS_PORT} ${MICROPY_QSTRDEFS_COLLECTED} | sed "s/^Q(.*)/\"&\"/" | ${CMAKE_C_COMPILER} -E ${MICROPY_CPP_FLAGS} - | sed "s/^\\\"\\(Q(.*)\\)\\\"/\\1/" > ${MICROPY_QSTRDEFS_PREPROCESSED}
+        DEPENDS ${MICROPY_QSTRDEFS_PY}
+            ${MICROPY_QSTRDEFS_PORT}
+            ${MICROPY_QSTRDEFS_COLLECTED}
+        VERBATIM
+        COMMAND_EXPAND_LISTS
+    )
+endif()
 
 add_custom_command(
     OUTPUT ${MICROPY_QSTRDEFS_GENERATED}

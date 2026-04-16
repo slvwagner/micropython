@@ -25,6 +25,7 @@
 # THE SOFTWARE.
 
 import io
+import os
 import struct
 import sys
 from binascii import hexlify
@@ -40,6 +41,7 @@ def hexlify_to_str(b):
     return str(hexlify(b, ":"), "ascii")
 
 
+sys.path.insert(0, os.path.dirname(__file__))
 sys.path.append(sys.path[0] + "/../py")
 import makeqstrdata as qstrutil
 

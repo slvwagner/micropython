@@ -28,6 +28,9 @@ import sys
 import os
 import subprocess
 
+# Ensure helper modules next to this script are importable on Windows builds.
+sys.path.insert(0, os.path.dirname(__file__))
+
 # Always use the mpy-cross from this repo.
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "../mpy-cross"))
 import mpy_cross
